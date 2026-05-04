@@ -102,22 +102,18 @@ class _CartScreenState extends State<CartScreen> {
 
   /// Sepet Ürünleri Listesi
   Widget _buildCartItems() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(AppConstants.paddingMedium),
-            itemCount: cartService.items.length,
-            itemBuilder: (context, index) {
-              final cartItem = cartService.items[index];
-              return _buildCartItemCard(cartItem, context);
-            },
-          ),
-          const SizedBox(height: 20),
-        ],
+    return ListView.builder(
+      padding: EdgeInsets.only(
+        left: AppConstants.paddingMedium,
+        right: AppConstants.paddingMedium,
+        top: AppConstants.paddingMedium,
+        bottom: AppConstants.paddingMedium + 80,
       ),
+      itemCount: cartService.items.length,
+      itemBuilder: (context, index) {
+        final cartItem = cartService.items[index];
+        return _buildCartItemCard(cartItem, context);
+      },
     );
   }
 
@@ -180,15 +176,13 @@ class _CartScreenState extends State<CartScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Ürün Adı
-                  Flexible(
-                    child: Text(
-                      cartItem.product.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  Text(
+                    cartItem.product.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -207,14 +201,12 @@ class _CartScreenState extends State<CartScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Flexible(
-                        child: Text(
-                          '₺${cartItem.totalPrice.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange,
-                          ),
+                      Text(
+                        '₺${cartItem.totalPrice.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
                         ),
                       ),
                       // Miktar Kontrolleri
@@ -289,9 +281,10 @@ class _CartScreenState extends State<CartScreen> {
             ),
             const SizedBox(width: AppConstants.paddingSmall),
             // Kaldır Butonu
-            Align(
-              alignment: Alignment.topRight,
+            SizedBox(
+              width: 40,
               child: IconButton(
+                padding: EdgeInsets.zero,
                 icon: const Icon(Icons.close, color: Colors.red),
                 onPressed: () {
                   setState(() {

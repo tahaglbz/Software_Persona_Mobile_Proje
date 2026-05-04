@@ -1,13 +1,24 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  runApp(const NovaStoreApp());
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+  };
+
+  runZonedGuarded(() {
+    runApp(const NovaStoreApp());
+  }, (error, stack) {
+    // ignore: avoid_print
+    print('Uncaught zone error: $error');
+    // ignore: avoid_print
+    print(stack);
+  });
 }
 
-/// NovaStore Mini Katalog Uygulaması
-/// Lisans: MIT
-/// Geliştirici: Flutter Graduation Project
 class NovaStoreApp extends StatelessWidget {
   const NovaStoreApp({Key? key}) : super(key: key);
 

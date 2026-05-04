@@ -1,164 +1,74 @@
-# 📱 Mini Katalog Uygulaması - Proje Yapısı
+# NovaStore Mini Katalog
 
-## 📂 Klasör Hiyerarşisi
+Kısa Açıklama
 
-```
-mini_catalog_app/
-├── lib/
-│   ├── main.dart                 # Uygulamanın giriş noktası
-│   ├── screens/                  # Ekranlar (sayfalar)
-│   │   ├── home_screen.dart      # Ana sayfa
-│   │   ├── product_list_screen.dart # Ürün listesi
-│   │   └── product_detail_screen.dart # Ürün detayı
-│   ├── widgets/                  # Yeniden kullanılabilir bileşenler
-│   │   ├── product_card.dart     # Ürün kartı widget'ı
-│   │   ├── custom_appbar.dart    # Özel AppBar
-│   │   └── product_grid.dart     # Ürün grid layout'ı
-│   ├── models/                   # Veri modelleri
-│   │   └── product.dart          # Ürün modeli (JSON serialization ile)
-│   └── constants/                # Sabitler (opsiyonel)
-│       └── app_constants.dart    # Uygulamaya ait sabitler
-│
-├── assets/
-│   ├── banners/                  # Banner görselleri
-│   │   └── banner.png            # Ana banner
-│   ├── images/                   # Ürün görselleri
-│   └── icons/                    # Özel ikonlar
-│
-├── pubspec.yaml                  # Proje bağımlılıkları ve konfigürasyonu
-└── README.md                      # Proje dokümantasyonu
+- NovaStore Mini Katalog, FakeStore API'den ürünleri listeleyen, detaylarını gösteren ve basit bir in-memory sepet sistemi sunan eğitim amaçlı bir Flutter uygulamasıdır.
+
+Kullanılan / Önerilen Flutter / Dart Sürümü
+
+- `pubspec.yaml` içindeki Dart SDK kısıtlaması: `sdk: '>=3.0.0 <4.0.0'`.
+- Önerilen: Flutter stable kanalı, Flutter 3.x veya üzeri (Dart 3 uyumlu). Mevcut makinedeki sürümü görmek için:
+
+```bash
+flutter --version
 ```
 
-## 🎯 Klasörlerin Amacı
+Çalıştırma Adımları
 
-### **lib/main.dart**
-- Uygulamanın başlangıç dosyası
-- `main()` fonksiyonu burada tanımlanır
-- `MaterialApp` konfigürasyonu yapılır
+1. Depoyu klonlayın veya proje klasörüne gidin:
 
-### **lib/screens/**
-Uygulamanın her ekranı için bir Stateless/Stateful widget
-- `HomeScreen` - Ana sayfa
-- `ProductListScreen` - Ürün listesi (Day 2-3)
-- `ProductDetailScreen` - Ürün detayı (Day 4)
-
-### **lib/widgets/**
-Birden fazla yerde kullanılacak küçük bileşenler
-- `ProductCard` - Ürün kartı (Day 5)
-- `CustomAppBar` - Özel AppBar
-- `ProductGrid` - Grid layout (Day 5)
-
-### **lib/models/**
-Veri modelleri ve JSON serialization
-- `Product` sınıfı (Day 4)
-  - ürün adı, fiyat, açıklama
-  - `fromJson()` ve `toJson()` metodları
-
-### **assets/**
-Statik dosyalar
-- **banners/**: Banner görselleri
-- **images/**: Ürün görselleri
-- **icons/**: Özel ikonlar (Material Icons yerine)
-
-## 📋 pubspec.yaml Açıklaması
-
-```yaml
-name: mini_catalog_app
-description: Mini Katalog Uygulaması
-version: 1.0.0+1
-
-environment:
-  sdk: '>=3.0.0 <4.0.0'  # Dart versiyonu
-
-dependencies:
-  flutter:
-    sdk: flutter
-  cupertino_icons: ^1.0.2  # iOS ikonları
-
-flutter:
-  uses-material-design: true
-  
-  assets:
-    - assets/banners/     # Bu dosyalar içinde kullanabiliriz
-    - assets/images/
-    - assets/icons/
+```bash
+cd /Users/tahagulbaz/Documents/GitHub/Software_Persona_Mobile_Proje/mini_catalog_app
 ```
 
-**Önemli**: Assets ekledikten sonra `flutter pub get` çalıştırmalısın!
+2. Gerekli paketleri yükleyin:
 
-## 🚀 Çalıştırma Adımları (iOS Simulator)
-
-1. **Proje dosyasında aç**:
-   ```bash
-   cd /Users/tahagulbaz/Documents/GitHub/Software_Persona_Mobile_Proje/mini_catalog_app
-   flutter pub get
-   ```
-
-2. **iOS Simulator başlat**:
-   ```bash
-   open -a Simulator
-   ```
-
-3. **Uygulamayı çalıştır**:
-   ```bash
-   flutter run
-   ```
-
-4. **Hot Reload kullan** (Değişiklikleri anında gör):
-   - Kodu değiştir
-   - Terminal'de `r` tuşuna bas
-
-5. **Tamamen yeniden başlat**:
-   - Terminal'de `R` tuşuna bas (capital R)
-
-## 📌 Stateless vs Stateful Widget
-
-### **Stateless Widget**
-- State'i (durumu) değişmeyen UI bileşenleri
-- `build()` metodu biriktir
-- Örnek: Başlık, metin, ikon
-
-```dart
-class MyButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Button(child: Text('Tıkla'));
-  }
-}
+```bash
+flutter pub get
 ```
 
-### **Stateful Widget**
-- State'i (durumu) değişebilen UI bileşenleri
-- `build()` metodu StateClass'ta
-- `setState()` ile UI yeniden çizilir
-- Örnek: Counter, Form, Toggle
+3. iOS Simulator veya Android Emulator açın (veya cihazınızı bağlayın), sonra uygulamayı çalıştırın:
 
-```dart
-class Counter extends StatefulWidget {
-  @override
-  State<Counter> createState() => _CounterState();
-}
-
-class _CounterState extends State<Counter> {
-  int count = 0;
-  
-  @override
-  Widget build(BuildContext context) {
-    return Text('$count');
-  }
-}
+```bash
+flutter run -d <DEVICE_ID>
 ```
 
-## ✅ Day 1 Kontrol Listesi
+Cihaz listesini görmek için:
 
-- [x] Proje klasör yapısı oluşturuldu
-- [x] `pubspec.yaml` konfigüre edildi
-- [x] `lib/main.dart` başlangıç kodu yazıldı
-- [x] `lib/screens/`, `lib/widgets/`, `lib/models/` klasörleri oluşturuldu
-- [x] `assets/` klasörleri (banners, images, icons) oluşturuldu
-- [ ] Komutu çalıştır: `flutter pub get`
-- [ ] iOS Simulator'da test et: `flutter run`
+```bash
+flutter devices
+```
 
----
+4. Uygulamayı derlemek (release):
 
-**Sonraki**: Day 2'de Layout (Row, Column, Card, Container) öğreneceğiz!
+- Android:
+
+```bash
+flutter build apk --release
+```
+
+- iOS (macOS gereklidir):
+
+```bash
+flutter build ios --release
+```
+
+Hata Yakalama / Debug İpuçları
+
+- Uygulama çalışırken konsolda detaylı log almak için:
+
+```bash
+flutter run -d <DEVICE_ID> --verbose > run_log.txt 2>&1
+```
+
+- Sık karşılaşılan layout/RenderBox sorunları genelde `Flexible`/`Expanded` kullanımından veya bir `ListView`/`Column` içinde sınırlandırılmamış widget'lardan kaynaklanır.
+
+Proje Yapısı (Kısa)
+
+- `lib/main.dart` — Uygulama giriş noktası.
+- `lib/screens/` — Ekranlar (Home, Detail, Cart vb.).
+- `lib/widgets/` — Yeniden kullanılabilir widget'lar.
+- `lib/services/cart_service.dart` — Basit in-memory sepet servisi.
+- `lib/models/product.dart` — Ürün veri modeli.
+
+
