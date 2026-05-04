@@ -50,7 +50,8 @@ abstract class ProductConstants {
 abstract class TextStrings {
   // Ana ekran
   static const String homeTitle = 'Hoş Geldiniz';
-  static const String selectProductText = 'Ürünü seçerek detaylarını görebilirsiniz';
+  static const String selectProductText =
+      'Ürünü seçerek detaylarını görebilirsiniz';
   static const String loadingText = 'Ürünler yükleniyor...';
   static const String errorText = 'Hata oluştu. Lütfen tekrar deneyiniz.';
   static const String retryText = 'Tekrar Dene';
@@ -68,6 +69,17 @@ abstract class TextStrings {
 
   // Hata mesajları
   static const String networkErrorText = 'İnternet bağlantısını kontrol edin';
-  static const String timeoutErrorText = 'Zaman aşımı. Lütfen tekrar deneyiniz.';
+  static const String timeoutErrorText =
+      'Zaman aşımı. Lütfen tekrar deneyiniz.';
   static const String unknownErrorText = 'Bilinmeyen bir hata oluştu';
+
+  // Sepet ekranı
+  static const String cartTitle = 'Sepetim';
+  static const String emptyCartText = 'Sepetiniz boş';
+  static const String continueShopping = 'Alışverişe Devam Et';
+  static const String removedFromCart = 'sepetten kaldırıldı';
+  static const String totalPrice = 'Toplam Fiyat';
+  static const String checkout = 'Ödeme Yap';
+  static const String checkoutSimulation =
+      '✓ Ödeme işlemi başarılı! Siparişiniz alındı.';
 }

@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 import '../models/product.dart';
 import '../constants/app_constants.dart';
 import '../widgets/product_grid_card.dart';
+import '../services/cart_service.dart';
 import 'detail_screen.dart';
+import 'cart_screen.dart';
 
 /// Ana Sayfa - Day 5: GridView.builder ile ürün kataloğu
 /// Ürünleri FakeStore API'den gerçek zamanlı yükler
@@ -17,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Product>> futureProducts;
+  final CartService cartService = CartService();
 
   @override
   void initState() {
@@ -67,12 +70,72 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         elevation: 2,
         backgroundColor: Colors.blue.shade700,
+        actions: [
+          // Sepet İkonu
+          Padding(
+            padding: const EdgeInsets.only(right: AppConstants.paddingMedium),
+            child: Center(
+              child: Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart_outlined),
+                    onPressed: () async {
+                      try {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CartScreen(),
+                          ),
+                        );
+                        setState(() {});
+                      } catch (e, st) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content:
+                                  Text('Sepet açılamadı: ${e.toString()}')),
+                        );
+                        // ignore: avoid_print
+                        print('Cart navigation error: $e\n$st');
+                      }
+                    },
+                  ),
+                  // Sepet sayacı
+                  if (cartService.itemCount > 0)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 20,
+                          minHeight: 20,
+                        ),
+                        child: Text(
+                          '${cartService.itemCount}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
             // Banner Alanı
-            _buildBannerSection(),
+            _buildBannerSection(context),
             // Ürün Gridı
             Expanded(
               child: _buildProductGrid(),
@@ -83,40 +146,67 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Banner Bölümü
-  Widget _buildBannerSection() {
-    return Container(
-      width: double.infinity,
-      height: 150,
-      margin: const EdgeInsets.all(AppConstants.paddingMedium),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.blue.shade50,
-        border: Border.all(color: Colors.blue.shade200),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.asset(
-          AppConstants.bannerPath,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.image_not_supported,
-                      size: 40, color: Colors.blue.shade300),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Banner bulunamadı',
-                    style: TextStyle(color: Colors.blue.shade300),
-                  ),
-                ],
+  /// Banner Bölümü - Responsive Design
+  Widget _buildBannerSection(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Ekran genişliğine göre banner yüksekliğini ayarla
+        final bannerHeight =
+            constraints.maxWidth * 0.05; // Ekran genişliğinin %35'i
+
+        return Container(
+          width: double.infinity,
+          height: bannerHeight.clamp(120, 180),
+          margin: const EdgeInsets.all(AppConstants.paddingMedium),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.blue.shade50,
+            border: Border.all(color: Colors.blue.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade300,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-            );
-          },
-        ),
-      ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              AppConstants.bannerPath,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.blue.shade50,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image_not_supported,
+                          size: 40,
+                          color: Colors.blue.shade300,
+                        ),
+                        const SizedBox(height: 8),
+                        Flexible(
+                          child: Text(
+                            'Banner bulunamadı',
+                            style: TextStyle(
+                              color: Colors.blue.shade300,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -133,11 +223,13 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 const CircularProgressIndicator(),
                 const SizedBox(height: 16),
-                Text(
-                  TextStrings.loadingText,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.shade600,
+                Flexible(
+                  child: Text(
+                    TextStrings.loadingText,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
+                    ),
                   ),
                 ),
               ],
@@ -148,32 +240,40 @@ class _HomeScreenState extends State<HomeScreen> {
         // Hata durumu
         if (snapshot.hasError) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 48,
-                  color: Colors.red.shade300,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  TextStrings.errorText,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.red,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: Colors.red.shade300,
                   ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      futureProducts = fetchProducts();
-                    });
-                  },
-                  child: const Text(TextStrings.retryText),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        TextStrings.errorText,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        futureProducts = fetchProducts();
+                      });
+                    },
+                    child: const Text(TextStrings.retryText),
+                  ),
+                ],
+              ),
             ),
           );
         }
@@ -198,16 +298,28 @@ class _HomeScreenState extends State<HomeScreen> {
               final product = products[index];
               return ProductGridCard(
                 product: product,
-                onTap: () {
-                  // Day 3: Navigation ile ürün detayına git
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DetailScreen(
-                        product: product,
+                onTap: () async {
+                  // Navigate to detail screen with error handling to avoid crashes
+                  try {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailScreen(
+                          product: product,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                    // Update state after returning
+                    setState(() {});
+                  } catch (e, st) {
+                    // Show non-fatal error and log stack trace for debugging
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Hata: ${e.toString()}')),
+                    );
+                    // Print to console for developer inspection
+                    // ignore: avoid_print
+                    print('Navigation error: $e\n$st');
+                  }
                 },
               );
             },

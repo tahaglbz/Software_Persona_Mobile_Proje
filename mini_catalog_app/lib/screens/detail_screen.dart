@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../constants/app_constants.dart';
+import '../services/cart_service.dart';
 
 /// Ürün Detay Ekranı - Day 3: MaterialPageRoute Navigation
 /// Ürün bilgilerini detaylı gösterir ve "Sepete Ekle" işlemi
@@ -17,25 +18,40 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  // Sepet simülasyonu - Day 5: State management
-  int cartItemCount = 0;
+  late CartService cartService;
+  int cartQuantity = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    cartService = CartService();
+    cartQuantity = cartService.getQuantity(widget.product.id);
+  }
 
   /// "Sepete Ekle" butonuna tıklandığında çalışan metod
   void _addToCart() {
-    setState(() {
-      cartItemCount++;
-    });
+    cartService.addItem(widget.product);
+    cartQuantity = cartService.getQuantity(widget.product.id);
 
     // Snackbar ile kullanıcıya bilgi ver
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text(TextStrings.addedToCartText),
+        content: Text(
+          '${widget.product.title} ${TextStrings.addedToCartText}',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
         backgroundColor: Colors.green.shade600,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(AppConstants.paddingMedium),
       ),
     );
+
+    // State'i güncelle
+    setState(() {
+      cartQuantity = cartService.getQuantity(widget.product.id);
+    });
   }
 
   @override
@@ -157,21 +173,25 @@ class _DetailScreenState extends State<DetailScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  '${TextStrings.priceText}:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade700,
+                Flexible(
+                  child: Text(
+                    '${TextStrings.priceText}:',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade700,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  '₺${widget.product.price.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
+                Flexible(
+                  child: Text(
+                    '₺${widget.product.price.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                    ),
                   ),
                 ),
               ],
@@ -195,6 +215,8 @@ class _DetailScreenState extends State<DetailScreen> {
             color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         backgroundColor: Colors.blue.shade600,
         padding: const EdgeInsets.symmetric(
@@ -212,9 +234,9 @@ class _DetailScreenState extends State<DetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             TextStrings.descriptionText,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppConstants.fontSizeMedium,
               fontWeight: FontWeight.bold,
             ),
@@ -287,22 +309,21 @@ class _DetailScreenState extends State<DetailScreen> {
                 ],
               ),
               // Yıldız Gösterimi
-              Column(
-                children: [
-                  Row(
-                    children: List.generate(5, (index) {
-                      return Icon(
-                        index < rating.rate.floor()
-                            ? Icons.star_rounded
-                            : index < rating.rate
-                                ? Icons.star_half_rounded
-                                : Icons.star_outline_rounded,
-                        color: Colors.amber.shade600,
-                        size: 20,
-                      );
-                    }),
-                  ),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      index < rating.rate.floor()
+                          ? Icons.star_rounded
+                          : index < rating.rate
+                              ? Icons.star_half_rounded
+                              : Icons.star_outline_rounded,
+                      color: Colors.amber.shade600,
+                      size: 20,
+                    );
+                  }),
+                ),
               ),
             ],
           ),
@@ -334,14 +355,16 @@ class _DetailScreenState extends State<DetailScreen> {
             children: [
               const Icon(Icons.shopping_cart_rounded, size: 24),
               const SizedBox(width: 12),
-              const Text(
-                TextStrings.addToCartText,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              Flexible(
+                child: Text(
+                  TextStrings.addToCartText,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              if (cartItemCount > 0) ...[
+              if (cartQuantity > 0) ...[
                 const SizedBox(width: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -353,7 +376,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '$cartItemCount',
+                    '$cartQuantity',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.green.shade600,

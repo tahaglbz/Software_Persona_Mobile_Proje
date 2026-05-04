@@ -64,7 +64,7 @@ class _ProductGridCardState extends State<ProductGridCard> {
   /// Ürün Görselini Gösteren Bölüm
   Widget _buildProductImage() {
     return Container(
-      height: ProductConstants.productImageHeight * 0.6,
+      height: ProductConstants.productImageHeight * 0.4,
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.grey.shade100,

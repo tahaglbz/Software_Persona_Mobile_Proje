@@ -3,7 +3,8 @@ import '../models/product.dart';
 
 /// Ürün kartı widget'ı (Eski - ListView versiyonu)
 /// GridView için ProductGridCard kullanılmalıdır
-@Deprecated('ListView için tutulmuştur. GridView için ProductGridCard kullanın.')
+@Deprecated(
+    'ListView için tutulmuştur. GridView için ProductGridCard kullanın.')
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback onTap;
