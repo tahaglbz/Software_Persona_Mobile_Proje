@@ -72,3 +72,7 @@ Proje Yapısı (Kısa)
 - `lib/models/product.dart` — Ürün veri modeli.
 
 
+![Ana Ekran](/mini_catalog_app/assets/readmess/anaekran.png)
+![Ürün Detay](/mini_catalog_app/assets/readmess/urundetay.png)
+![Ürün Detay 2](/mini_catalog_app/assets/readmess/urundetay2.png)
+![Sepet](/mini_catalog_app/assets/readmess/sepet.png)
